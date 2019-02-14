@@ -1,15 +1,11 @@
-Igreen = imread("image (581).jpg");
-Ired = imread("image (567).jpg");
+Igreen = imread("red.png");
+Ired = imread("Almost255red.png");
 
 Igreen_lab = rgb2lab(Igreen);
 Ired_lab = rgb2lab(Ired);
 
-[L,cent] = imsegkmeans(Ired,3);
-l_mean = mode(mode(L));
-thisImage = labeloverlay(Ired,L);
-imshow(thisImage)
-%difference = sqrt((Igreen_lab(:,:,1)-Ired_lab(:,:,1)).^2+(Igreen_lab(:,:,2)-Ired_lab(:,:,2)).^2+(Igreen_lab(:,:,3)-Ired_lab(:,:,3)).^2);
-%mean(mean(difference))
+difference = sqrt((Igreen_lab(:,:,1)-Ired_lab(:,:,1)).^2+(Igreen_lab(:,:,2)-Ired_lab(:,:,2)).^2+(Igreen_lab(:,:,3)-Ired_lab(:,:,3)).^2);
+imshow(difference)
 
 %gren = mean2(Igreen);
 %red = mean2(Ired);
