@@ -4,8 +4,34 @@ Ired = imread("image (567).jpg");
 Igreen_lab = rgb2lab(Igreen);
 Ired_lab = rgb2lab(Ired);
 
-[L,cent] = imsegkmeans(Ired,3);
+[L,cent] = imsegkmeans(Igreen,2);
 l_mean = mode(mode(L));
+
+for i = 1:32
+    for j = 1:32
+        if(L(i,j) ~= l_mean)
+            l_mask(i,j) = 0;
+        else
+            l_mask(i,j) = 1; 
+        end
+    end
+end
+
+for k = 1:32
+    for l = 1:32
+        if(l_mask(k,l) == 1)
+            %meanMatrix(b,c) = Igreen(k,l,:);
+
+        end
+    end
+end
+
+%meansImage = ( Igreen(1:32,1:32,:)  )
+
+%figure
+%imshow(l_mask)
+%figure
+%imshow(Igreen)
 thisImage = labeloverlay(Ired,L);
 imshow(thisImage)
 %difference = sqrt((Igreen_lab(:,:,1)-Ired_lab(:,:,1)).^2+(Igreen_lab(:,:,2)-Ired_lab(:,:,2)).^2+(Igreen_lab(:,:,3)-Ired_lab(:,:,3)).^2);
