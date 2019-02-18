@@ -61,6 +61,7 @@ meanValueOfImageB = mean(values(1:b-1, 3));
 
 %% Metod 3 Labjämförelse
  m = 516;
+ % m = 405;
  I=imread('image (1).jpg');
  [r n p]=size(I);  % Your Images are either 2D or 3D
  Manifold=zeros(r,n,p,m); % 3D with singleton or 4D 
@@ -80,29 +81,50 @@ for p = 1: 1:(size(Manifold,4))-1
             %do nothing
         else
            difference = mean2(sqrt((Manifold(:,:,1,p)-Manifold(:,:,1,q)).^2+(Manifold(:,:,2,p)-Manifold(:,:,2,q)).^2+(Manifold(:,:,3,p)-Manifold(:,:,3,q)).^2));
-           if(difference > 20)
+           if(difference > 25)
                if(blackList(q) == 1)
                    continue;        
                else
                    blackList(q) = 2;               
                end               
            elseif(blackList(q) == 0 || blackList(q) == 2)
-               blackList(q) = 1;
-               
+               blackList(q) = 1;              
            end         
         end
     end
 end
 
-nrImages = sum(blackList(:) == 2);
-%%
-tempCount = 1;
+
+imageCounter = 1;
+
 for i = 1:size(Manifold,4)
     if(blackList(i) == 2)
-        finalDataBase(:,:,:,tempCount) = Manifold(:,:,:,i);
-        tempCount = 1 + tempCount;
+        ImageDataBase_LAB(:,:,:,imageCounter) = (Manifold(:,:,:,i));
+        imageCounter = imageCounter + 1;
     end
 end
+
+%% Analysera datorbasen
+
+L_Data = squeeze(mean(mean(ImageDataBase_LAB(:,:,1,:))));
+A_Data = squeeze(mean(mean(ImageDataBase_LAB(:,:,2,:))));
+B_Data = squeeze(mean(mean(ImageDataBase_LAB(:,:,3,:))));
+
+L_Data_sorted = sort(L_Data);
+A_Data_sorted = sort(A_Data);
+B_Data_sorted = sort(B_Data);
+
+subplot(2,2,[1 2])
+a = bar(L_Data_sorted');
+title('Luminance');
+
+subplot(2,2,3)
+b = bar(A_Data_sorted');
+title('A-channel (g->r)')
+
+subplot(2,2,4)
+c = bar(B_Data_sorted');
+title('B-channel (b->y)')
 
 %% Image Reproduction
 
@@ -120,3 +142,4 @@ for i = 1:2:size(orignalImage,1)
     tempPosY = 1;
     tempPosX = 1 + tempPosX;
 end
+
