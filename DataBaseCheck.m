@@ -70,7 +70,6 @@ meanValueOfImageB = mean(values(1:b-1, 3));
  Manifold(:,:,:,x)=rgb2lab(imread(filename));
  end
  
-%% Markera bilder i newMatrix;
 blackList = zeros(1,(size(Manifold,4)));
 
 for p = 1: 1:(size(Manifold,4))-1
@@ -96,6 +95,6 @@ for p = 1: 1:(size(Manifold,4))-1
     end
 end
 
-images = sum(blackList(:) == 2)
-
+nrImages = sum(blackList(:) == 2);
+blackListedImages = reshape(blackList,1, nrImages);
 
