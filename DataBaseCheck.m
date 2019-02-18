@@ -70,49 +70,32 @@ meanValueOfImageB = mean(values(1:b-1, 3));
  Manifold(:,:,:,x)=rgb2lab(imread(filename));
  end
  
-%%
-newMatrix(:,:,:,1) = Manifold(:,:,:,1);
+%% Markera bilder i newMatrix;
+blackList = zeros(1,(size(Manifold,4)));
 
-nrImages = 1;
-
-for j = 1:m
-    difference = mean2(sqrt((Manifold(:,:,1,1)-Manifold(:,:,1,j)).^2+(Manifold(:,:,2,1)-Manifold(:,:,2,j)).^2+(Manifold(:,:,3,1)-Manifold(:,:,3,j)).^2));
-    if( difference > 25)
-        newMatrix(:,:,:,nrImages) = Manifold(:,:,:,j);
-        nrImages = nrImages+1;
+for p = 1: 1:(size(Manifold,4))-1
+    for q = 1: 1:(size(Manifold,4))-1
+        if(blackList(p) == 1)
+            %Jämför inte någon som är blacklistad
+            break;
+        elseif(p == q)
+            %do nothing
+        else
+           difference = mean2(sqrt((Manifold(:,:,1,p)-Manifold(:,:,1,q)).^2+(Manifold(:,:,2,p)-Manifold(:,:,2,q)).^2+(Manifold(:,:,3,p)-Manifold(:,:,3,q)).^2));
+           if(difference > 20)
+               if(blackList(q) == 1)
+                   continue;        
+               else
+                   blackList(q) = 2;               
+               end               
+           elseif(blackList(q) == 0 || blackList(q) == 2)
+               blackList(q) = 1;
+               
+           end         
+        end
     end
-    
-end
-%% Mindre för varje iteration... en funktion av detta?
-for l = 1: nrImages - 1;
-    for m = 1:m
-    difference = mean2(sqrt((newMatrix(:,:,1,l)-Manifold(:,:,1,j)).^2+(newMatrix(:,:,2,l)-Manifold(:,:,2,j)).^2+(newMatrix(:,:,3,l)-Manifold(:,:,3,j)).^2));
-end   
-
-
-%%
-
-
-for i = 1:m-1
-   for j = 2:(m-2-i)
-       for k = 1:size(nyMatis,4)
-           if(nyMatris)
-            difference = mean2(sqrt((nyMatris(:,:,1,k)-Manifold(:,:,1,j)).^2+(Manifold(:,:,2,k)-Manifold(:,:,2,j)).^2+(Manifold(:,:,3,i)-Manifold(:,:,3,j)).^2));
-           end
-       end
-   end
 end
 
- 
-difference = mean2(sqrt((labImage1(:,:,1,1:x)-labImage2(:,:,1,1:x)).^2+(labImage1(:,:,2)-labImage2(:,:,2)).^2+(labImage1(:,:,3)-labImage2(:,:,3)).^2));
- 
- 
-labImage1 = rgb2lab(rgbImage);
-labImage2 = rgb2lab(rgbImage2);
-
-difference = mean2(sqrt((labImage1(:,:,1)-labImage2(:,:,1)).^2+(labImage1(:,:,2)-labImage2(:,:,2)).^2+(labImage1(:,:,3)-labImage2(:,:,3)).^2));
-
-%mean(mean(difference))
+images = sum(blackList(:) == 2)
 
 
-%image = kmeans(double(rgbImage),3);

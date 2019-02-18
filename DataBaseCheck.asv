@@ -70,48 +70,100 @@ meanValueOfImageB = mean(values(1:b-1, 3));
  Manifold(:,:,:,x)=rgb2lab(imread(filename));
  end
  
-
- 
-%%
+%% Jämför alla bilder mot första.
 newMatrix(:,:,:,1) = Manifold(:,:,:,1);
 
-nrImages = 1;
+imageCounter = 1;
+
 
 for j = 1:m
     difference = mean2(sqrt((Manifold(:,:,1,1)-Manifold(:,:,1,j)).^2+(Manifold(:,:,2,1)-Manifold(:,:,2,j)).^2+(Manifold(:,:,3,1)-Manifold(:,:,3,j)).^2));
     if( difference > 25)
-        newMatrix(:,:,:,nrImages) = Manifold(:,:,:,j);
-        nrImages = nrImages+1;
+
+
+        newMatrix(:,:,:,imageCounter) = Manifold(:,:,:,j);
+        imageCounter = imageCounter+1;
     end
-    
 end
-%% Mindre för varje iteration... en funktion av detta?
-checkPosition = zeros(1,nrImages-1);
-for p = 1: nrImages - 1
-    if(p == 1)
-       tempCount = 1;
-    end
-    for q = 1:nrImages -1
-        if (p == q)
-            % Do nothing
+
+
+%% Markera bilder i newMatrix;
+blackList = zeros(1,(size(newMatrix,4)));
+
+for p = 1: imageCounter - 1
+    for q = 1: imageCounter - 1
+        if(blackList(p) == 1)
+            %Jämför inte någon som är blacklistad
+            break;
+        elseif(p == q)
+            %do nothing
         else
-            diff = mean2(sqrt((newMatrix(:,:,1,p)-newMatrix(:,:,1,q)).^2+(newMatrix(:,:,2,p)-newMatrix(:,:,2,q)).^2+(newMatrix(:,:,3,p)-newMatrix(:,:,3,q)).^2));
-            if(diff > 30)
-                
-                if(ismember(q,checkPosition(1,:)))
-                    % Do nothing
-                else
-                    tempDataBase(:,:,:,tempCount) = newMatrix(:,:,:,q);
-                    checkPosition(tempCount) = q;
-                    tempCount = tempCount + 1;
-                end
-            end
+           difference = mean2(sqrt((newMatrix(:,:,1,p)-newMatrix(:,:,1,q)).^2+(newMatrix(:,:,2,p)-newMatrix(:,:,2,q)).^2+(newMatrix(:,:,3,p)-newMatrix(:,:,3,q)).^2));
+           if(difference > 25)
+                blackList(q) = 2;               
+           elseif(blackList(q) == 0)
+               blackList(q) = 1;
+           else
+               
+           end         
         end
     end
-    
+end
+
+
+%% Mindre för varje iteration... en funktion av detta? ***Backup**
+databaseCounter = 1;
+maxValue = 25;1
+positionInMatrix = zeros(1,imageCounter);
+
+for p = 1 : imageCounter - 1
+    for q = 1:imageCounter - 1
+        if(p == q)
+           %Jämför inte samma bild #Do nothing
+        else
+            difference = mean2(sqrt((newMatrix(:,:,1,p)-newMatrix(:,:,1,q)).^2+(newMatrix(:,:,2,p)-newMatrix(:,:,2,q)).^2+(newMatrix(:,:,3,p)-newMatrix(:,:,3,q)).^2));
+            if(difference > 30)
+                if(ismember(q,positionInMatrix)) 
+                    break;
+                else
+                    % Do nothing
+                    positionInMatrix(q) = q;
+                    finalDatabase(:,:,:,databaseCounter) = newMatrix(:,:,:,q);
+                    databaseCounter = 1 + databaseCounter;
+                end
+            end
+            
+        end    
+    end
 end   
 
-size(tempDataBase,4)
+%    if(q == imageCounter-1)
+%                 finalDatabase(:,:,:,databaseCounter) = lab2rgb(newMatrix(:,:,:,positionInMatrix));
+%                 databaseCounter = databaseCounter + 1;
+%             end
+
+
+
+%% Duplicates?
+
+maxValuesIn = 25;
+for p = 1 : size(finalDatabase,4) -1
+    for q = 1:size(finalDatabase,4) -1
+        if(p == q)
+           %Jämför inte samma bild #Do nothing
+        else
+            difference = mean2(sqrt((finalDatabase(:,:,1,p)-finalDatabase(:,:,1,q)).^2+(finalDatabase(:,:,2,p)-finalDatabase(:,:,2,q)).^2+(finalDatabase(:,:,3,p)-finalDatabase(:,:,3,q)).^2));
+            if(difference > maxValuesIn)
+                maxValuesIn = difference;
+                positionInMatrix = p;             
+            end
+            if(q == imageCounter-1 && maxValuesIn > 1)
+                duplicates = duplicates + 1;
+            end
+        end    
+    end
+end   
+
 
 %%
 
