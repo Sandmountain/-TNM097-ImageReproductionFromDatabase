@@ -96,5 +96,3 @@ for p = 1: 1:(size(Manifold,4))-1
 end
 
 nrImages = sum(blackList(:) == 2);
-blackListedImages = reshape(blackList,1, nrImages);
-

@@ -70,120 +70,29 @@ meanValueOfImageB = mean(values(1:b-1, 3));
  Manifold(:,:,:,x)=rgb2lab(imread(filename));
  end
  
-%% Jämför alla bilder mot första.
-newMatrix(:,:,:,1) = Manifold(:,:,:,1);
+blackList = zeros(1,(size(Manifold,4)));
 
-imageCounter = 1;
-
-for j = 1:m
-    difference = mean2(sqrt((Manifold(:,:,1,1)-Manifold(:,:,1,j)).^2+(Manifold(:,:,2,1)-Manifold(:,:,2,j)).^2+(Manifold(:,:,3,1)-Manifold(:,:,3,j)).^2));
-    if( difference > 25)
-        newMatrix(:,:,:,imageCounter) = Manifold(:,:,:,j);
-        imageCounter = imageCounter+1;
-    end
-end
-
-
-%% Markera bilder i newMatrix;
-blackList = zeros(1,(size(newMatrix,4)));
-
-for p = 1: imageCounter - 1
-    for q = 1: imageCounter - 1
+for p = 1: 1:(size(Manifold,4))-1
+    for q = 1: 1:(size(Manifold,4))-1
         if(blackList(p) == 1)
             %Jämför inte någon som är blacklistad
             break;
         elseif(p == q)
             %do nothing
         else
-           difference = mean2(sqrt((newMatrix(:,:,1,p)-newMatrix(:,:,1,q)).^2+(newMatrix(:,:,2,p)-newMatrix(:,:,2,q)).^2+(newMatrix(:,:,3,p)-newMatrix(:,:,3,q)).^2));
-           if(difference > 25)
-                blackList(q) = 2;               
-           elseif(blackList(q) == 0)
+           difference = mean2(sqrt((Manifold(:,:,1,p)-Manifold(:,:,1,q)).^2+(Manifold(:,:,2,p)-Manifold(:,:,2,q)).^2+(Manifold(:,:,3,p)-Manifold(:,:,3,q)).^2));
+           if(difference > 20)
+               if(blackList(q) == 1)
+                   continue;        
+               else
+                   blackList(q) = 2;               
+               end               
+           elseif(blackList(q) == 0 || blackList(q) == 2)
                blackList(q) = 1;
-           else
                
            end         
         end
     end
 end
 
-
-%% Mindre för varje iteration... en funktion av detta? ***Backup**
-databaseCounter = 1;
-maxValue = 25;1
-positionInMatrix = zeros(1,imageCounter);
-
-for p = 1 : imageCounter - 1
-    for q = 1:imageCounter - 1
-        if(p == q)
-           %Jämför inte samma bild #Do nothing
-        else
-            difference = mean2(sqrt((newMatrix(:,:,1,p)-newMatrix(:,:,1,q)).^2+(newMatrix(:,:,2,p)-newMatrix(:,:,2,q)).^2+(newMatrix(:,:,3,p)-newMatrix(:,:,3,q)).^2));
-            if(difference > 30)
-                if(ismember(q,positionInMatrix)) 
-                    break;
-                else
-                    % Do nothing
-                    positionInMatrix(q) = q;
-                    finalDatabase(:,:,:,databaseCounter) = newMatrix(:,:,:,q);
-                    databaseCounter = 1 + databaseCounter;
-                end
-            end
-            
-        end    
-    end
-end   
-
-%    if(q == imageCounter-1)
-%                 finalDatabase(:,:,:,databaseCounter) = lab2rgb(newMatrix(:,:,:,positionInMatrix));
-%                 databaseCounter = databaseCounter + 1;
-%             end
-
-
-
-%% Duplicates?
-
-maxValuesIn = 25;
-for p = 1 : size(finalDatabase,4) -1
-    for q = 1:size(finalDatabase,4) -1
-        if(p == q)
-           %Jämför inte samma bild #Do nothing
-        else
-            difference = mean2(sqrt((finalDatabase(:,:,1,p)-finalDatabase(:,:,1,q)).^2+(finalDatabase(:,:,2,p)-finalDatabase(:,:,2,q)).^2+(finalDatabase(:,:,3,p)-finalDatabase(:,:,3,q)).^2));
-            if(difference > maxValuesIn)
-                maxValuesIn = difference;
-                positionInMatrix = p;             
-            end
-            if(q == imageCounter-1 && maxValuesIn > 1)
-                duplicates = duplicates + 1;
-            end
-        end    
-    end
-end   
-
-%%
-
-
-for i = 1:m-1
-   for j = 2:(m-2-i)
-       for k = 1:size(nyMatis,4)
-           if(nyMatris)
-            difference = mean2(sqrt((nyMatris(:,:,1,k)-Manifold(:,:,1,j)).^2+(Manifold(:,:,2,k)-Manifold(:,:,2,j)).^2+(Manifold(:,:,3,i)-Manifold(:,:,3,j)).^2));
-           end
-       end
-   end
-end
-
- 
-difference = mean2(sqrt((labImage1(:,:,1,1:x)-labImage2(:,:,1,1:x)).^2+(labImage1(:,:,2)-labImage2(:,:,2)).^2+(labImage1(:,:,3)-labImage2(:,:,3)).^2));
- 
- 
-labImage1 = rgb2lab(rgbImage);
-labImage2 = rgb2lab(rgbImage2);
-
-difference = mean2(sqrt((labImage1(:,:,1)-labImage2(:,:,1)).^2+(labImage1(:,:,2)-labImage2(:,:,2)).^2+(labImage1(:,:,3)-labImage2(:,:,3)).^2));
-
-%mean(mean(difference))
-
-
-%image = kmeans(double(rgbImage),3);
+nrImages = sum(blackList(:) == 2);
