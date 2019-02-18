@@ -34,7 +34,6 @@ end
 %imhist((acctualColorR,acctualColorG,acctualColorB))
 
 %% Metod 2 Datamining
-
 [L,cent] = imsegkmeans(rgbImage,2);
 l_mean = mode(mode(L));
 
@@ -96,3 +95,28 @@ for p = 1: 1:(size(Manifold,4))-1
 end
 
 nrImages = sum(blackList(:) == 2);
+%%
+tempCount = 1;
+for i = 1:size(Manifold,4)
+    if(blackList(i) == 2)
+        finalDataBase(:,:,:,tempCount) = Manifold(:,:,:,i);
+        tempCount = 1 + tempCount;
+    end
+end
+
+%% Image Reproduction
+
+orignalImage = imread('night-road-minimalist-landscape-ob-2560x1440.jpg');
+tempPosY = 1;
+tempPosX = 1;
+for i = 1:2:size(orignalImage,1)
+    for j = 1:2:size(orignalImage,2)
+       if(i+2 > size(orignalImage,1) || j+2 > size(orignalImage,2))
+            break;
+       end
+       rgbmeanOrignalImage(tempPosX,tempPosY,:) = meanRgbIm(orignalImage(i:i+2,j:j+2,:));
+       tempPosY = tempPosY + 1;
+    end
+    tempPosY = 1;
+    tempPosX = 1 + tempPosX;
+end
