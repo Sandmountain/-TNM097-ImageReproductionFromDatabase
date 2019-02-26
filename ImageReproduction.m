@@ -1,5 +1,5 @@
 %% Image Reproduction
-nrOfPixels = 16;
+nrOfPixels = 8;
 RecreatedImageValues = rgb2lab(imresize(imread('viktor.jpg'),1/nrOfPixels));
 %Lab_Image = rgb2lab(orignalImage);
 
