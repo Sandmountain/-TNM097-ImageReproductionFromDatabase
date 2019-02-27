@@ -1,6 +1,8 @@
 %% Image Reproduction
+
 nrOfPixels = 4;
 RecreatedImageValues = rgb2lab(imresize(imread('obama.jpg'),1/nrOfPixels));
+
 %Lab_Image = rgb2lab(orignalImage);
 
 %Gör om databasen till RGB

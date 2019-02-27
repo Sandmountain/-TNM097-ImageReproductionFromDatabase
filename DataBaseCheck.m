@@ -1,12 +1,12 @@
 %% Databasskapande & optimering
- Threshold = 15;                %
- m = 516;                       %Antalet bilder i databasen
+ Threshold = 30;                % Tröskelvärdet vi jämför mot 15 relativt lågt knappt någon skillnad i upplevd färg
+ m = 1380;                       % Antalet bilder i databasen
  
- I=imread('image (1).jpg');     % Namnet på första bilden 
+ I=imread('bigDataImage(1).jpg');     % Namnet på första bilden 
  [r n p]=size(I);               % Your Images are either 2D or 3D
  Manifold=zeros(r,n,p,m);       % 3D with singleton or 4D 
  for x=1:m
- filename=strcat('image (',num2str(x),').jpg');
+ filename=strcat('bigDataImage(',num2str(x),').jpg');
  Manifold(:,:,:,x)=rgb2lab(imread(filename));
  end
  
