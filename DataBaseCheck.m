@@ -1,5 +1,5 @@
 %% Databasskapande & optimering
- Threshold = 30;                % Tröskelvärdet vi jämför mot 15 relativt lågt knappt någon skillnad i upplevd färg
+ Threshold = 30;                % < tröskelvärde, större skillnad v.v.
  m = 1380;                       % Antalet bilder i databasen
  
  I=imread('bigDataImage(1).jpg');     % Namnet på första bilden 

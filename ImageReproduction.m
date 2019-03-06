@@ -1,6 +1,7 @@
 %% Image Reproduction
-
-nrOfPixels = 4;
+% välj bäst SSIM, kolla 32x32 område - hitta bästa kandidat (genom SSIM)
+% och jämför alla närliggande bilder
+nrOfPixels = 1;
 RecreatedImageValues = rgb2lab(imresize(imread('obama.jpg'),1/nrOfPixels));
 
 %Lab_Image = rgb2lab(orignalImage);
@@ -20,9 +21,18 @@ for a = 1:size(RecreatedImageValues,1)
         difference = mean2(sqrt((Value_L-L_Data(1)).^2 + (Value_A-A_Data(1)).^2 + (Value_B-B_Data(1)).^2));
         for findImage = 1:size(L_Data,1)
             NewDifference = mean2(sqrt((Value_L-L_Data(findImage)).^2 + (Value_A-A_Data(findImage)).^2 + (Value_B-B_Data(findImage)).^2));
-            if(NewDifference < difference && b ~= 1 && idx(a,b-1) ~= findImage)          % Hittar minsta differansen
+            if(NewDifference < difference)          % Hittar minsta differansen
                 difference = NewDifference;         % Ekvivalent? med min(pixel,bild)      
                 idx(a,b) = findImage;               % Sparar index för bilden
+                
+%                 Kod för att inte ha samma bilder eftervarandra.
+%                 if(b ~= 1 && idx(a,b-1) ~= findImage) 
+%                    
+%                 elseif(b == 1)
+%                     idx(a,b) = findImage;
+%                 else
+%                     continue;
+%                 end
             end
         end
     end
@@ -42,8 +52,14 @@ imshow(newImage)
 
 
 %% TODO 
-% [] Göra Databas lite större och bättre omfång.
-% [] Optimera databas utifrån en bild
-% [] Lägga till kvalitétsmått
-% [] Lägga till ett annat mått vid nästan helt lika bilder
-% [] Göra GUI?
+% 
+% [X] Optimera databas utifrån en bild
+% [X] Lägga till kvalitétsmått
+% [~] Lägga till ett annat mått vid nästan helt lika bilder
+% [X] Göra GUI
+% [X] Göra Databas lite större och bättre omfång.
+
+% Prata om scrubben om databasen, HVS, 
+% x/\E+(1-x)*(1-SSIM)    //Låg värde på x, färg dålig, bra struktur (Välj
+% det minsta)
+% x = 0.2, 0.5, 0.8 (32 x 32 område)-> välj de bilder ifrån databasen 

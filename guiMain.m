@@ -78,8 +78,24 @@ function ImageScaleSlider_Callback(hObject, eventdata, handles)
 % hObject    handle to ImageScaleSlider (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 value = get(hObject,'Value');
-valueFloored = floor(value)
+valueRounded = round(value);
+
+global filename filepath;
+filePathName = [filepath filename] 
+
+image = imread(filePathName);
+xsize = size(image,1);
+ysize = size(image,2);
+
+newDimension = num2str(round(xsize*32/valueRounded)) + " x " + num2str(round(ysize*32/valueRounded)) + " px";
+
+set(handles.DimensionText, 'BackgroundColor', get( hObject, 'BackgroundColor' ) );
+set(handles.DimensionText, 'String', newDimension);
+set(handles.factor, 'String', num2str(valueRounded));
+
+%set(handles.DimensionText, 'String', dimensions)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 
@@ -124,9 +140,25 @@ function ChoosePathButton_Callback(hObject, eventdata, handles)
 % hObject    handle to ChoosePathButton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[filename,filepath]=uigetfile({'*.jpg'},'Select an image');
-ImagePathText_Callback(filename);
-set(handles.pushbutton1,'string','running','enable','off');
+global filename filepath
+[filename , filepath]=uigetfile({'*.jpg'},'Select an image');
+%ImagePathText_Callback(filename);
+%set(handles.pushbutton1,'string','running','enable','off');
+full_filepath = [filepath filename];
+
+image = imread(full_filepath);
+xsize = size(image,1);
+ysize = size(image,2);
+
+set(handles.ImageScaleSlider,'visible','on')
+set(handles.factor,'visible','on')
+set(handles.DatabaseMenu,'visible','on')
+set(handles.GenerateButton,'visible','on')
+
+
+set(handles.ImagePathText, 'String', full_filepath);
+newDimension = "Use slider to decide output size";
+set(handles.DimensionText, 'String', newDimension);
 
 
 % --- Executes on selection change in DatabaseMenu.
@@ -157,6 +189,7 @@ function Untitled_1_Callback(hObject, eventdata, handles)
 % hObject    handle to Untitled_1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+basicwaitbar;
 
 
 % --- Executes on button press in GenerateButton.
